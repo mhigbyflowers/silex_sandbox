@@ -24,7 +24,7 @@ $app->get('/messages', function () {
 
     $payload = [];
     foreach ($messages as $_msg) {
-        $payload[$_msg->id] = ['body' => $_msg->body, 'user_id' => $_msg->user_id, 'created_at' => $_msg->created_at, 'updated_at' => $_msg->updated_at];
+        $payload[$_msg->id] = ['body' => $_msg->body, 'user_id' => $_msg->user_id, 'created_at' => $_msg->created_at, 'updated_at' => $_msg->updated_at, 'file' => $_msg->image_url];
     }
 
     return json_encode($payload);
