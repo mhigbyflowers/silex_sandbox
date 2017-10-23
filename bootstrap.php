@@ -13,7 +13,7 @@ $capsule->addConnection([
     "password"  => "chatter_api",
     "charset"   => "utf8",
     "collation" => "utf8_general_ci",
-    "prefix"    => ""
+    "prefix"    => "zxcxz"
 ]);
 
 $capsule->bootEloquent();
