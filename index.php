@@ -47,4 +47,15 @@ $app->post('/messages', function (Request $request) use ($app) {
     return $app->json($payload, $code);
 });
 
+$app->delete('/messages/{message_id}', function ($message_id) use ($app) {
+    $message = Message::find($message_id);
+    $message->delete();
+
+    if ($message->exists) {
+        return new Response('', 400);
+    } else {
+        return new Response('', 204);
+    }
+});
+
 $app->run();
