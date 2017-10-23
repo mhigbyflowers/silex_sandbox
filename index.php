@@ -5,10 +5,12 @@ include 'bootstrap.php';
 
 use Chatter\Models\Message;
 use Chatter\Middleware\Logging as ChatterLogging;
+use Chatter\Middleware\Authentication as ChatterAuth ;
 
 $app = new Silex\Application();
 $app->before(function ($request, $app) {
     ChatterLogging::log($request, $app);
+    ChatterAuth::authenticate($request, $app);
 });
 
 $app->get('/messages', function () use ($app) {
