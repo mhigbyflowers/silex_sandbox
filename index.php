@@ -15,6 +15,8 @@ $app->before(function ($request, $app) {
     ChatterAuth::authenticate($request, $app);
 });
 
+//HTTP GET
+
 $app->get('/messages', function () {
     $_message = new Message();
 
@@ -27,6 +29,8 @@ $app->get('/messages', function () {
 
     return json_encode($payload);
 });
+
+//HTTP POST
 
 $app->post('/messages', function (Request $request) use ($app) {
     $_message = $request->get('message');
@@ -47,6 +51,7 @@ $app->post('/messages', function (Request $request) use ($app) {
     return $app->json($payload, $code);
 });
 
+//HTTP DELETE
 $app->delete('/messages/{message_id}', function ($message_id) use ($app) {
     $message = Message::find($message_id);
     $message->delete();
