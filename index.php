@@ -6,6 +6,9 @@ include 'bootstrap.php';
 use Chatter\Models\Message;
 use Chatter\Middleware\Logging as ChatterLogging;
 use Chatter\Middleware\Authentication as ChatterAuth;
+use Chatter\Middleware\FileFilter;
+use Chatter\Middleware\ImageRemoveExif;
+use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,20 +33,30 @@ $app->get('/messages', function () {
     return json_encode($payload);
 });
 
+
+//setting up Middleware
+$filter = function (Request $request, Application $app) {
+    $filefilter = new FileFilter();
+    $filepath = $filefilter->filter($_FILES, $app);
+    $request->headers->set('filepath', $filepath);
+};
+$removeExif = function (Request $request, Application $app) {
+    $filepath = $request->headers->get('filepath');
+    $filepath = ImageRemoveExif::removeExif($filepath);
+    $request->headers->set('filepath', $filepath);
+};
+
 //HTTP POST
 
 $app->post('/messages', function (Request $request) use ($app) {
     $_message = $request->get('message');
 
-    $newfile = $_Files['files'];
-    $uploadFileName = $newfile['name'];
-    move_uploaded_file($newfile['tmp_name'], "assets/images/$uploadFileName");
-    $imagepath = "assets/images/$uploadFileName";
+
 
     $message = new Message();
     $message->body = $_message;
     $message->user_id = -1;
-    $message->image_url = $imagepath;
+    $message->image_url = $request->headers->get('filepath');
     $message->save();
 
     if ($message->id) {
@@ -55,7 +68,7 @@ $app->post('/messages', function (Request $request) use ($app) {
     }
 
     return $app->json($payload, $code);
-});
+})->before($filter)->before($removeExif);
 
 //HTTP DELETE
 $app->delete('/messages/{message_id}', function ($message_id) use ($app) {
