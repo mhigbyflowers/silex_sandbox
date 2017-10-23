@@ -35,9 +35,15 @@ $app->get('/messages', function () {
 $app->post('/messages', function (Request $request) use ($app) {
     $_message = $request->get('message');
 
+    $newfile = $_Files['files'];
+    $uploadFileName = $newfile['name'];
+    move_uploaded_file($newfile['tmp_name'], "assets/images/$uploadFileName");
+    $imagepath = "assets/images/$uploadFileName";
+
     $message = new Message();
     $message->body = $_message;
     $message->user_id = -1;
+    $message->image_url = $imagepath;
     $message->save();
 
     if ($message->id) {
