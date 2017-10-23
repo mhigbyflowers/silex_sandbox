@@ -9,8 +9,8 @@ $capsule->addConnection([
     "driver"    => "mysql",
     "host"      => "127.0.0.1",
     "database"  => "chatter",
-    "username"  => "root",
-    "password"  => "zxc",
+    "username"  => "chatter_api",
+    "password"  => "chatter_api",
     "charset"   => "utf8",
     "collation" => "utf8_general_ci",
     "prefix"    => ""
