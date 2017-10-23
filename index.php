@@ -4,8 +4,12 @@ require 'vendor/autoload.php';
 include 'bootstrap.php';
 
 use Chatter\Models\Message;
+use Chatter\Middleware\Logging as ChatterLogging;
 
 $app = new Silex\Application();
+$app->before(function ($request, $app) {
+    ChatterLogging::log($request, $app);
+});
 
 $app->get('/messages', function () use ($app) {
     $_message = new Message();
