@@ -1,6 +1,7 @@
 
 composer.phar
 /vendor/
+/src/Chatter/Middleware/FileMove.php
 .Ds_Store
 /src/.Ds_Store
 /assets/images/

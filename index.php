@@ -7,6 +7,7 @@ use Chatter\Models\Message;
 use Chatter\Middleware\Logging as ChatterLogging;
 use Chatter\Middleware\Authentication as ChatterAuth;
 use Chatter\Middleware\FileFilter;
+use Chatter\Middleware\FileMove;
 use Chatter\Middleware\ImageRemoveExif;
 use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,14 @@ $app->get('/messages', function () {
 
     $payload = [];
     foreach ($messages as $_msg) {
-        $payload[$_msg->id] = ['body' => $_msg->body, 'user_id' => $_msg->user_id, 'created_at' => $_msg->created_at, 'updated_at' => $_msg->updated_at, 'file' => $_msg->image_url];
+        $payload[$_msg->id] = ['body' => $_msg->body,
+                               'user_id' => $_msg->user_id,
+                               'user_uri' => '/user/' . $msg->user_id,
+                               'created_at' => $_msg->created_at,
+                               'image_url' => $_msg->image_url,
+                               'messages_url' => $_msg->id,
+                               'messages_uri' => '/messages/'. $_msg->id
+                             ];
     }
 
     return json_encode($payload);
@@ -45,9 +53,13 @@ $removeExif = function (Request $request, Application $app) {
     $filepath = ImageRemoveExif::removeExif($filepath);
     $request->headers->set('filepath', $filepath);
 };
+  // $move = function (Request $request, Application $app) {
+  //     $filepath = $request->headers->get('filepath');
+  //     $filepath = FileMove::move($filepath, $app);
+  //     $request->headers->set('filepath', $filepath);
+  // };
 
 //HTTP POST
-
 $app->post('/messages', function (Request $request) use ($app) {
     $_message = $request->get('message');
 
@@ -60,7 +72,10 @@ $app->post('/messages', function (Request $request) use ($app) {
     $message->save();
 
     if ($message->id) {
-        $payload = ['message_id' => $message->id, 'message_uri' => '/messages/' . $message->id];
+        $payload = ['message_id' => $message->id,
+                    'message_uri' => '/messages/' . $message->id,
+                    'image_url'=>$message->image_url
+                  ];
         $code = 201;
     } else {
         $code = 400;
