@@ -7,6 +7,7 @@ use Chatter\Models\Message;
 use Chatter\Middleware\Logging as ChatterLogging;
 use Chatter\Middleware\Authentication as ChatterAuth;
 use Chatter\Middleware\FileFilter;
+use Chatter\Middleware\FileMove;
 use Chatter\Middleware\ImageRemoveExif;
 use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +53,11 @@ $removeExif = function (Request $request, Application $app) {
     $filepath = ImageRemoveExif::removeExif($filepath);
     $request->headers->set('filepath', $filepath);
 };
+  $move = function (Request $request, Application $app) {
+      $filepath = $request->headers->get('filepath');
+      $filepath = FileMove::move($filepath, $app);
+      $request->headers->set('filepath', $filepath);
+  };
 
 //HTTP POST
 $app->post('/messages', function (Request $request) use ($app) {
@@ -77,7 +83,7 @@ $app->post('/messages', function (Request $request) use ($app) {
     }
 
     return $app->json($payload, $code);
-})->before($filter)->before($removeExif);
+})->before($filter)->before($removeExif)->before($move);
 
 //HTTP DELETE
 $app->delete('/messages/{message_id}', function ($message_id) use ($app) {
