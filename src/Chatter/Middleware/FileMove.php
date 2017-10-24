@@ -16,7 +16,7 @@ class FileMove
         try {
             $s3->putObject([
                 'Bucket' => 'silex-sandbox',
-                'Key'    => 'AKIAICALBSHGOPSUIOAA',
+                'Key'    => 'gXl5ddqZPwnyu+sGRjFhWlDWFDXpX6lwKkjSPSxK',
                 'Body'   => fopen($imagepath, 'r'),
                 'ACL'    => 'public-read',
             ]);

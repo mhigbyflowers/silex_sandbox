@@ -53,11 +53,11 @@ $removeExif = function (Request $request, Application $app) {
     $filepath = ImageRemoveExif::removeExif($filepath);
     $request->headers->set('filepath', $filepath);
 };
-  $move = function (Request $request, Application $app) {
-      $filepath = $request->headers->get('filepath');
-      $filepath = FileMove::move($filepath, $app);
-      $request->headers->set('filepath', $filepath);
-  };
+  // $move = function (Request $request, Application $app) {
+  //     $filepath = $request->headers->get('filepath');
+  //     $filepath = FileMove::move($filepath, $app);
+  //     $request->headers->set('filepath', $filepath);
+  // };
 
 //HTTP POST
 $app->post('/messages', function (Request $request) use ($app) {
@@ -83,7 +83,7 @@ $app->post('/messages', function (Request $request) use ($app) {
     }
 
     return $app->json($payload, $code);
-})->before($filter)->before($removeExif)->before($move);
+})->before($filter)->before($removeExif);
 
 //HTTP DELETE
 $app->delete('/messages/{message_id}', function ($message_id) use ($app) {
